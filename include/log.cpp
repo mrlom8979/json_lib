@@ -16,19 +16,19 @@ void __log(log_level lvl, const char *format, ...) {
   // Вывод префикса в зависимости от уровня
   switch (lvl) {
     case JSON_LOG_DEBUG:
-      printf("[%s] [DEBUG]: ", time_buffer);
+      printf("(JSONLIB) [%s] [DEBUG]: ", time_buffer);
       break;
     case JSON_LOG_INFO:
-      printf("[%s] [INFO]: ", time_buffer);
+      printf("(JSONLIB) [%s] [INFO]: ", time_buffer);
       break;
     case JSON_LOG_WARNING:
-      printf("[%s] [WARNING]: ", time_buffer);
+      printf("(JSONLIB) [%s] [WARNING]: ", time_buffer);
       break;
     case JSON_LOG_ERROR:
-      printf("[%s] [ERROR]: ", time_buffer);
+      printf("(JSONLIB) [%s] [ERROR]: ", time_buffer);
       break;
     default:
-      printf("[%s] [UNKNOWN]: ", time_buffer);
+      printf("(JSONLIB) [%s] [UNKNOWN]: ", time_buffer);
   }
 
   // Обработка аргументов переменной длины
