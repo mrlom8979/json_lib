@@ -29,17 +29,17 @@ void handle_number(handler_ctx& ctx, const token& t) {
     }
 
     ctx.current_key = nullptr;
-  }/* else if (current_node->type == JSON_AST_ARRAY) {
-          // Если текущий узел - это массив, добавляем число в массив
-          double number_value = strtod(current_token.value, nullptr);
-          ast_node* number_node = ast_create_number(number_value);
+  } else if (ctx.current_node->type == JSON_AST_ARRAY) {
+    // Если текущий узел - это массив, добавляем число в массив
+    double number_value = strtod(t.value, nullptr);
+    ast_node* number_node = ast_create_number(number_value);
 
-          current_node->array_values = (ast_node**)realloc(
-            current_node->array_values,
-            (current_node->value_count + 1) * sizeof(ast_node*)
-          );
-          current_node->array_values[current_node->value_count++] = number_node;
-        }*/
+    ctx.current_node->array_values = (ast_node**)realloc(
+      ctx.current_node->array_values,
+      (ctx.current_node->value_count + 1) * sizeof(ast_node*)
+    );
+    ctx.current_node->array_values[ctx.current_node->value_count++] = number_node;
+  }
 
 }
 

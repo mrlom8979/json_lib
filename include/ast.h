@@ -58,5 +58,8 @@ void ast_free_pair(ast_pair *pair);
 
 ast_result* get_value_from_ast(ast_node* root, const char* path);
 
+void print_ast_node(ast_node *node, int indent);
+void print_ast(ast_node *root);
+
 }
 

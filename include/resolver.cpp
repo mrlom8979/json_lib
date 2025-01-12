@@ -11,13 +11,14 @@ void resolve_token(const token& token, handler_ctx& ctx, const token_resolver* r
   // size_t resolver_count = sizeof(resolvers) / sizeof(resolvers[0]);
   // __debug("%d", resolver_count);
   for (size_t i = 0; i < resolver_count; ++i) {
-    __debug("%d", resolvers[i].type);
+    // __debug("%d", resolvers[i].type);
     if (resolvers[i].type == token.type) {
       resolvers[i].handler(ctx, token);
       return;
     }
   }
   
+  __err("Unexpected token: %s", token.value);
   // Если обработчик не найден, вызываем обработчик для неизвестного токена
   // __err("Unknown token.");
 }

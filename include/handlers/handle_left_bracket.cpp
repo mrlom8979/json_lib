@@ -7,46 +7,45 @@
 namespace json {
 
 void handle_left_bracket(handler_ctx& ctx, const token& t) {
-  /*
-        PHX_CORE_DEBUG("JSON_TOKEN_LEFT_BRACKET");
-        ast_node* new_array = ast_create_array();
 
-        if (!root) {
-          root = new_array;
-        } else if (current_node->type == JSON_AST_OBJECT && current_key) {
-          ast_node* pair = ast_create_pair(current_key, new_array);
-          current_node->object_values = (ast_node**)realloc(
-            current_node->object_values,
-            (current_node->value_count + 1) * sizeof(ast_node*)
-          );
-          current_node->object_values[current_node->value_count++] = pair;
+  __debug("JSON_TOKEN_LEFT_BRACKET");
+  ast_node* new_array = ast_create_array();
 
-          // free(current_key);
-          if (current_key) {
-            free(current_key);
-          }
+  if (!ctx.root) {
+    ctx.root = new_array;
+  } else if (ctx.current_node->type == JSON_AST_OBJECT && ctx.current_key) {
+    ast_node* pair = ast_create_pair(ctx.current_key, new_array);
+    ctx.current_node->object_values = (ast_node**)realloc(
+      ctx.current_node->object_values,
+      (ctx.current_node->value_count + 1) * sizeof(ast_node*)
+    );
+    ctx.current_node->object_values[ctx.current_node->value_count++] = pair;
 
-          current_key = nullptr;
+    // free(current_key);
+    if (ctx.current_key) {
+      free(ctx.current_key);
+    }
 
-        } else if (current_node->type == JSON_AST_ARRAY) {
-          current_node->array_values = (ast_node**)realloc(
-            current_node->array_values,
-            (current_node->value_count + 1) * sizeof(ast_node*)
-          );
-          current_node->array_values[current_node->value_count++] = new_array;
-        }
+    ctx.current_key = nullptr;
 
-        if (++stack_top_array >= stack_capacity_array) {
-          stack_capacity_array = stack_capacity_array > 0 ? stack_capacity_array * 2 : 8;
-          stack_array = (ast_node**)realloc(stack_array, stack_capacity_array * sizeof(ast_node*));
-          if (!stack_array) {
-            __err("Memory allocation for stack failed.");
-            return nullptr;
-          }
-        }
-        stack_array[stack_top_array] = current_node;
-        current_node = new_array;
-        */
+  } else if (ctx.current_node->type == JSON_AST_ARRAY) {
+    ctx.current_node->array_values = (ast_node**)realloc(
+      ctx.current_node->array_values,
+      (ctx.current_node->value_count + 1) * sizeof(ast_node*)
+    );
+    ctx.current_node->array_values[ctx.current_node->value_count++] = new_array;
+  }
+
+  if (++ctx.stack_top_array >= ctx.stack_capacity_array) {
+    ctx.stack_capacity_array = ctx.stack_capacity_array > 0 ? ctx.stack_capacity_array * 2 : 8;
+    ctx.stack_array = (ast_node**)realloc(ctx.stack_array, ctx.stack_capacity_array * sizeof(ast_node*));
+    if (!ctx.stack_array) {
+      __err("Memory allocation for stack failed.");
+      return;
+    }
+  }
+  ctx.stack_array[ctx.stack_top_array] = ctx.current_node;
+  ctx.current_node = new_array;
 
 }
 

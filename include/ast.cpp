@@ -211,8 +211,9 @@ ast_node* ast_build_from_tokens(parser* p) {
 
 
 ast_result* get_value_from_ast(ast_node* root, const char* path) {
-  // if (!root || !path || root->type != JSON_AST_OBJECT) return nullptr;
   if (!root || !path) return nullptr;
+
+  printf("Get value from path: %s\n", path);
 
   // Копируем путь, чтобы безопасно его модифицировать
   char* path_copy = strdup(path);
@@ -221,51 +222,75 @@ ast_result* get_value_from_ast(ast_node* root, const char* path) {
   char* token = strtok(path_copy, "->");
   ast_node* current_node = root;
 
+  printf("Token path: %s\n", token);
+
   while (token) {
     bool key_found = false;
+    // Проверка на квадратные скобки, чтобы извлечь индекс
+    char* index_str = strchr(token, '[');
+    if (index_str) {
+      // Разделяем token на ключ и индекс
+      *index_str = '\0'; // Разделяем ключ (например "roles")
+      int index = atoi(index_str + 1); // Извлекаем индекс после '['
 
-    // Проверяем, если это массив, и извлекаем индекс
-    if (current_node->type == JSON_AST_ARRAY) {
-      // Пытаемся извлечь индекс из token (например "array[0]")
-      char* index_str = strchr(token, '[');
-      if (index_str) {
-        *index_str = '\0'; // Завершаем строку до '['
-        int index = atoi(index_str + 1); // Извлекаем индекс после '['
+      // Убираем ']' в конце
+      if (index_str[strlen(index_str) - 1] == ']') {
+        index_str[strlen(index_str) - 1] = '\0';
+      }
 
-        // Убираем ']' в конце
-        if (index_str[strlen(index_str) - 1] == ']') {
-          index_str[strlen(index_str) - 1] = '\0';
+      printf("Extracted key: %s, index: %d\n", token, index);
+
+      // Проверяем, что текущий узел - это объект, и ищем ключ
+      if (current_node->type == JSON_AST_OBJECT) {
+        for (size_t i = 0; i < current_node->value_count; ++i) {
+          json::ast_pair* pair = current_node->object_values[i]->pair_value;
+
+          if (pair && strcmp(pair->key, token) == 0) {
+            current_node = pair->value; // Переходим на следующий уровень
+            key_found = true;
+            break;
+          }
         }
+      }
 
-        // Если индекс корректен, получаем элемент массива
+      // После того как нашли ключ, проверяем, что это массив и извлекаем элемент по индексу
+      if (key_found && current_node->type == JSON_AST_ARRAY) {
         if (index >= 0 && index < current_node->value_count) {
           current_node = current_node->array_values[index];
           key_found = true;
+        } else {
+          free(path_copy);
+          return nullptr;  // Индекс за пределами массива
+        }
+      }
+    } else {
+      // Если это просто ключ (без индекса)
+      if (current_node->type == JSON_AST_OBJECT) {
+        for (size_t i = 0; i < current_node->value_count; ++i) {
+          json::ast_pair* pair = current_node->object_values[i]->pair_value;
+
+          if (pair && strcmp(pair->key, token) == 0) {
+            current_node = pair->value;
+            key_found = true;
+            break;
+          }
         }
       }
     }
 
-    // Если это объект, ищем ключ
-    if (current_node->type == JSON_AST_OBJECT && !key_found) {
-      for (size_t i = 0; i < current_node->value_count; ++i) {
-        json::ast_pair* pair = current_node->object_values[i]->pair_value;
-
-        if (pair && strcmp(pair->key, token) == 0) {
-          current_node = pair->value; // Переходим на следующий уровень
-          key_found = true;
-          break;
-        }
-      }
-    }
-
+    // Если ключ не найден
     if (!key_found) {
+      printf("Key not found: %s\n", token);
       free(path_copy);
       return nullptr; // Ключ не найден
     }
 
-    // Если остались ещё части пути, проверяем, что текущий узел - объект
+    // Переходим к следующему сегменту пути
     token = strtok(nullptr, "->");
+
+    // Если осталась часть пути, проверяем, что текущий узел - это объект или массив
     if (token && !(current_node && (current_node->type == JSON_AST_OBJECT || current_node->type == JSON_AST_ARRAY))) {
+      printf("Invalid node type for path segment: %s\n", token);
       free(path_copy);
       return nullptr; // Следующая часть пути невозможна
     }
@@ -307,5 +332,87 @@ ast_result* get_value_from_ast(ast_node* root, const char* path) {
 
   return result;
 }
+
+
+
+
+
+
+
+
+
+
+void print_ast_node(ast_node *node, int indent) {
+  if (!node) return;
+
+  // Добавление отступа для визуализации вложенности
+  for (int i = 0; i < indent; i++) {
+    printf("  ");
+  }
+
+  // Вывод информации о типе узла
+  switch (node->type) {
+    case JSON_AST_OBJECT:
+      printf("{\n");
+      for (size_t i = 0; i < node->value_count; ++i) {
+        ast_pair *pair = node->object_values[i]->pair_value;
+        printf("  ");
+        printf("\"%s\": ", pair->key);
+        print_ast_node(pair->value, indent + 1);
+      }
+      for (int i = 0; i < indent; i++) {
+        printf("  ");
+      }
+      printf("}\n");
+      break;
+
+    case JSON_AST_ARRAY:
+      printf("[\n");
+      for (size_t i = 0; i < node->value_count; ++i) {
+        print_ast_node(node->array_values[i], indent + 1);
+      }
+      for (int i = 0; i < indent; i++) {
+        printf("  ");
+      }
+      printf("]\n");
+      break;
+
+    case JSON_AST_STRING:
+      printf("\"%s\"\n", node->string_value);
+      break;
+
+    case JSON_AST_NUMBER:
+      printf("%lf\n", node->number_value);
+      break;
+
+    case JSON_AST_BOOLEAN:
+      printf(node->boolean_value ? "true\n" : "false\n");
+      break;
+
+    case JSON_AST_NULL:
+      printf("null\n");
+      break;
+
+    case JSON_AST_PAIR:
+      printf("\"%s\": ", node->pair_value->key);
+      print_ast_node(node->pair_value->value, indent);
+      break;
+
+    default:
+      printf("Unknown node type\n");
+      break;
+  }
+}
+
+// Функция для вывода всего дерева
+void print_ast(ast_node *root) {
+  if (root) {
+    print_ast_node(root, 0);
+  } else {
+    printf("Empty tree\n");
+  }
+}
+
+
 
 } // namespace json

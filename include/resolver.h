@@ -14,9 +14,15 @@ namespace json {
 typedef struct {
   ast_node* root;
   ast_node* current_node;
+  
   ast_node** stack_object;
   size_t stack_top_object;
   size_t stack_capacity_object;
+
+  ast_node** stack_array = nullptr;
+  size_t stack_top_array = 0;
+  size_t stack_capacity_array = 0;
+
   char* current_key;
 } handler_ctx;
 

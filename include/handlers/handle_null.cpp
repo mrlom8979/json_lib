@@ -30,9 +30,7 @@ void handle_null(handler_ctx& ctx, const token& t) {
     }
 
     ctx.current_key = nullptr;
-  } 
-  // Можно добавить обработку для массива, если нужно:
-  /* else if (ctx.current_node->type == JSON_AST_ARRAY) {
+  } else if (ctx.current_node->type == JSON_AST_ARRAY) {
     // Если текущий узел - это массив, добавляем null в массив
     ast_node* null_node = ast_create_null();
 
@@ -41,7 +39,7 @@ void handle_null(handler_ctx& ctx, const token& t) {
       (ctx.current_node->value_count + 1) * sizeof(ast_node*)
     );
     ctx.current_node->array_values[ctx.current_node->value_count++] = null_node;
-  }*/
+  }
 
 }
 

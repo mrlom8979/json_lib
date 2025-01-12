@@ -35,16 +35,16 @@ void handle_string(handler_ctx& ctx, const token& t) {
     }
 
     ctx.current_key = nullptr;
-  }/* else if (current_node->type == JSON_AST_ARRAY) {
-          // Если текущий узел - это массив, добавляем строку в массив
-          ast_node* string_node = ast_create_string(current_token.value);
+  } else if (ctx.current_node->type == JSON_AST_ARRAY) {
+    // Если текущий узел - это массив, добавляем строку в массив
+    ast_node* string_node = ast_create_string(t.value);
 
-          current_node->array_values = (ast_node**)realloc(
-            current_node->array_values,
-            (current_node->value_count + 1) * sizeof(ast_node*)
-          );
-          current_node->array_values[current_node->value_count++] = string_node;
-        }*/
+    ctx.current_node->array_values = (ast_node**)realloc(
+      ctx.current_node->array_values,
+      (ctx.current_node->value_count + 1) * sizeof(ast_node*)
+    );
+    ctx.current_node->array_values[ctx.current_node->value_count++] = string_node;
+  }
 
 }
 
