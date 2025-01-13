@@ -12,6 +12,8 @@
 
 namespace json {
 
+void add_node_to_collection(ast_node* parent, ast_node* new_node);
+
 void handle_left_brace(handler_ctx& ctx, const token& t);
 void handle_right_brace(handler_ctx& ctx, const token& t);
 void handle_left_bracket(handler_ctx& ctx, const token& t);

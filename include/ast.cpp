@@ -103,32 +103,6 @@ void ast_free_pair(ast_pair *pair) {
 
 ast_node* ast_build_from_tokens(parser* p) {
 
-  // ast_node* root = nullptr;          // Корневой узел
-  // ast_node* current_node = nullptr;  // Текущий узел
-
-  // ast_node** stack = nullptr;        // Динамический стек
-  // int stack_top = -1;
-  // int stack_capacity = 0;
-
-  // ast_node** stack_object = nullptr;
-  // size_t stack_top_object = 0;
-  // size_t stack_capacity_object = 0;
-
-  // // ast_node** stack_array = nullptr;
-  // // size_t stack_top_array = 0;
-  // // size_t stack_capacity_array = 0;
-
-  // char* current_key = nullptr;       // Текущий ключ для пар
-
-  
-    // const token& current_token;
-    // ast_node** root;
-    // ast_node** current_node;
-    // ast_node*** stack_object;
-    // size_t* stack_top_object;
-    // size_t* stack_capacity_object;
-    // char** current_key;
-
   token_resolver resolvers[] = {
     { JSON_TOKEN_LEFT_BRACE, handle_left_brace },
     { JSON_TOKEN_RIGHT_BRACE, handle_right_brace },
@@ -161,39 +135,6 @@ ast_node* ast_build_from_tokens(parser* p) {
 
     resolve_token(current_token, ctx, resolvers, resolver_count);
 
-    /*
-    switch (current_token.type) {
-      case JSON_TOKEN_LEFT_BRACE: { // Начало объекта
-        break;
-      } // END JSON_TOKEN_LEFT_BRACE
-      case JSON_TOKEN_RIGHT_BRACE: { // Конец объекта
-        break;
-      } // END JSON_TOKEN_RIGHT_BRACE
-      case JSON_TOKEN_LEFT_BRACKET: { // Начало массива
-        break;
-      } // END JSON_TOKEN_LEFT_BRACKET
-      case JSON_TOKEN_RIGHT_BRACKET: { // Конец массива
-        break;
-      } // END JSON_TOKEN_RIGHT_BRACKET
-      case JSON_TOKEN_STRING: { // Строковый токен
-        break;
-      } // END JSON_TOKEN_STRING
-      case JSON_TOKEN_NUMBER: { // Числовой токен
-        break;
-      } // END JSON_TOKEN_NUMBER
-      case JSON_TOKEN_TRUE:   // Булев токен "true"
-      case JSON_TOKEN_FALSE: { // Булев токен "false"
-        break;
-      } // END JSON_TOKEN_FALSE
-      case JSON_TOKEN_COMMA: {
-        break;
-      }
-      default: {
-        __err("Unexpected token: %s", current_token.value);
-        break;
-      }
-    }
-    */
   }
 
   // free(stack);
