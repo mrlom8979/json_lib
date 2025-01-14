@@ -20,7 +20,7 @@ void handle_boolean(handler_ctx& ctx, const token& t) {
 
     ctx.current_key = nullptr;
 
-  } delse if (ctx.current_node->type == JSON_AST_ARRAY) {
+  } else if (ctx.current_node->type == JSON_AST_ARRAY) {
     // Если текущий узел - это массив, добавляем булевое значение в массив
     int boolean_value = (t.type == JSON_TOKEN_TRUE) ? 1 : 0;
     ast_node* boolean_node = ast_create_boolean(boolean_value);
