@@ -18,28 +18,13 @@ void handle_left_bracket(handler_ctx& ctx, const token& t) {
     
     add_node_to_collection(ctx.current_node, pair);
 
-    // ctx.current_node->object_values = (ast_node**)realloc(
-      // ctx.current_node->object_values,
-      // (ctx.current_node->value_count + 1) * sizeof(ast_node*)
-    // );
-    // ctx.current_node->object_values[ctx.current_node->value_count++] = pair;
-
-    // free(current_key);
-    if (ctx.current_key) {
-      free(ctx.current_key);
-    }
+    if (ctx.current_key) free(ctx.current_key);
 
     ctx.current_key = nullptr;
 
   } else if (ctx.current_node->type == JSON_AST_ARRAY) {
     
     add_node_to_collection(ctx.current_node, new_array);
-
-    // ctx.current_node->array_values = (ast_node**)realloc(
-      // ctx.current_node->array_values,
-      // (ctx.current_node->value_count + 1) * sizeof(ast_node*)
-    // );
-    // ctx.current_node->array_values[ctx.current_node->value_count++] = new_array;
   }
 
   if (++ctx.stack_top_array >= ctx.stack_capacity_array) {

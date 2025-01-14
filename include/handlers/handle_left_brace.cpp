@@ -18,16 +18,9 @@ void handle_left_brace(handler_ctx& ctx, const token& t) {
   } else if (ctx.current_node->type == JSON_AST_OBJECT && ctx.current_key) {
     // Добавляем объект как значение текущего ключа
     ast_node* pair = ast_create_pair(ctx.current_key, new_object);
-
-    // ctx.current_node->object_values = (ast_node**)realloc(
-      // ctx.current_node->object_values,
-      // (ctx.current_node->value_count + 1) * sizeof(ast_node*)
-    // );
-    // ctx.current_node->object_values[ctx.current_node->value_count++] = pair;
     
     add_node_to_collection(ctx.current_node, pair);
 
-    // free(current_key);
     if (ctx.current_key) {
       free(ctx.current_key);
       ctx.current_key = nullptr;
@@ -37,19 +30,8 @@ void handle_left_brace(handler_ctx& ctx, const token& t) {
 
   } else if (ctx.current_node->type == JSON_AST_OBJECT && !ctx.current_key) {
     add_node_to_collection(ctx.current_node, new_object);
-    // ctx.current_node->object_values = (ast_node**)realloc(
-      // ctx.current_node->object_values,
-      // (ctx.current_node->value_count + 1) * sizeof(ast_node*)
-    // );
-    // ctx.current_node->object_values[ctx.current_node->value_count++] = new_object;
   } else if (ctx.current_node->type == JSON_AST_ARRAY) {
     add_node_to_collection(ctx.current_node, new_object);
-    // Если текущий узел - это массив, добавляем объект в массив
-    // ctx.current_node->array_values = (ast_node**)realloc(
-      // ctx.current_node->array_values,
-      // (ctx.current_node->value_count + 1) * sizeof(ast_node*)
-    // );
-    // ctx.current_node->array_values[ctx.current_node->value_count++] = new_object;
   }
 
   // Сохраняем текущий узел в стек
